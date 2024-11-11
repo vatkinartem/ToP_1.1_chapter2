@@ -5,8 +5,6 @@
 #include <vector>
 #include <exception>
 
-#define _DEBUG 0
-
 using namespace std;
 using namespace myvec;
 
@@ -19,7 +17,7 @@ enum COM
 	EXIT
 };
 
-istream& operator>>(istream& is, COM& i)
+static istream& operator>>(istream& is, COM& i)
 {
 	int temp;
 	if (is >> temp)
@@ -45,11 +43,11 @@ int main()
 	{
 		cout << "Begin" << endl;
 		base.addEntry("Student fio group profession 1 0.0 \n");
-		cout << "\Student is done\n" << endl;
+		cout << "\nStudent is done\n" << endl;
 		base.addEntry("Professor fio (group1 group2 group3) (sub1 sub2 sub3) \n");
-		cout << "\Professor is done\n" << endl;
+		cout << "\nProfessor is done\n" << endl;
 		base.addEntry("AdminStaff fio post phone areaOfResponse \n");
-		cout << "\AdminStaff is done\n" << endl;
+		cout << "\nAdminStaff is done\n" << endl;
 		base.print();
 		base.saveToFile();
 		base.loadFromFile();

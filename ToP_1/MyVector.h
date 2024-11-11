@@ -17,9 +17,9 @@ public:
 	MyVector(MyVector<Type>&& _myVector) noexcept;
 	 ~MyVector();
 	string getClassName() const;
-	Type* getData() const;
-	Type* getFront() const;
-	Type* getBack() const;
+	Type** getData() const;
+	Type** getFront() const;
+	Type** getBack() const;
 
 	void pushBack(const Type& value);
 	void pushBack(const MyVector<Type>& _source);
@@ -49,9 +49,9 @@ public:
 protected:
 	
 private:
-	Type* data;					/*Poiner on data of vector*/
-	Type* front;				/*Pointer on first element in used block*/
-	Type* back;					/*Pointer on last element in used block*/
+	Type** data;					/*Poiner on data of vector*/
+	Type** front;				/*Pointer on first element in used block*/
+	Type** back;					/*Pointer on last element in used block*/
 	long long size;			/*Number of Type elements in vector*/
 	long long capacity;		/*Number of allocated Type elements in vector*/
 
@@ -149,19 +149,19 @@ inline string MyVector<Type>::getClassName() const
 }
 
 template<class Type>
-inline Type* MyVector<Type>::getData() const
+inline Type** MyVector<Type>::getData() const
 {
 	return this->data;
 }
 
 template<class Type>
-inline Type* MyVector<Type>::getFront() const
+inline Type** MyVector<Type>::getFront() const
 {
 	return this->front;
 }
 
 template<class Type>
-inline Type* MyVector<Type>::getBack() const
+inline Type** MyVector<Type>::getBack() const
 {
 	return this->back;
 }
@@ -174,16 +174,22 @@ inline void MyVector<Type>::pushBack(const Type& value)
 		this->reserve(calcNewCapacity( this->capacity + 1 ));		/*it could be resize() but I wanted to optimize it little*/
 	}
 	/* this->back now has to be pointing at newly allocated element*/
-	Type* temp = new Type;
-	if (temp == nullptr)
+	
+	try
 	{
-		throw(exception("Couldnt create temp element in pushBack(const Type& value) func."));
+		this->front[this->size] = new Type;
+		if (this->front[this->size] == nullptr)
+		{
+			throw(exception("Couldnt allocate memory in pushBack(const MyVector<Type>& _source) func."));
+		}
+		*this->front[this->size] = value;
+		this->size++;
+		this->back++;
 	}
-	this->front[this->size] = std::move(*temp);	/*clearing place before copy*/
-	this->front[this->size] = (Type)value;
-	this->size++;
-	this->back++;
-	delete temp;
+	catch (const std::exception& ex)
+	{
+		cout << ex.what() << endl;
+	}
 }
 
 template<class Type>
@@ -200,20 +206,11 @@ inline void MyVector<Type>::pushBack(const MyVector<Type>& _source)
 		this->reserve(calcNewCapacity(this->size + _source.size));
 	}
 
-	Type* temp = new Type;
-	if (temp == nullptr)
-	{
-		throw(exception("Couldnt create temp element in pushBack(const MyVector<Type>& _source) func."));
-	}
 	/*adding elems to back from source*/
 	for (long long i = 0; i < _source.size; i++)
 	{
-		this->front[this->size + i] = std::move(*temp);		/*clearing place before copy*/
-		this->front[this->size + i] = (Type)_source[i];
+		this->pushBack(_source[i]);
 	}
-	this->size += _source.size;
-	this->back += _source.size;
-	delete temp;
 }
 
 template<class Type>
@@ -225,9 +222,21 @@ inline void MyVector<Type>::pushBack(Type&& value) noexcept
 	}
 	/* this->back now has to be pointing at newly allocated element*/
 
-	this->front[this->size] = std::move(value);
-	this->size++;
-	this->back++;
+	try
+	{
+		this->front[this->size] = new Type;
+		if (this->front[this->size] == nullptr)
+		{
+			throw(exception("Couldnt allocate memory in pushBack(const MyVector<Type>& _source) func."));
+		}
+		*this->front[this->size] = std::move(value);
+		this->size++;
+		this->back++;
+	}
+	catch (const std::exception& ex)
+	{
+		cout << ex.what() << endl;
+	}
 }
 
 template<class Type>
@@ -245,21 +254,12 @@ inline void MyVector<Type>::pushBack(MyVector<Type>&& _source) noexcept
 	}
 
 	/*adding elems to back from source*/
-	Type* temp = new Type;
-	if (temp == nullptr)
-	{
-		throw(exception("Couldnt create temp element in pushBack(const Type& value) func."));
-	}
-
 	for (long long i = 0; i < _source.size; i++)
 	{
-		this->front[this->size + i] = std::move(*temp);			/*clearing place before copy*/
-		this->front[this->size + i] = std::move(_source[i]);
+		this->pushBack(std::move(_source[i]));
 	}
-	this->size += _source.size;
-	this->back += _source.size;
+
 	_source.nullifyParams();
-	delete temp;
 }
 
 template<class Type>
@@ -288,7 +288,7 @@ void swap(MyVector<Type>& _dest, MyVector<Type>& _source) noexcept
 template<class Type>
 inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 {
-	Type* temp_ptr = nullptr;
+	Type** temp_ptr = nullptr;
 	long long newSize = 0;
 	/*If we need to make a vector with zero than we want to free it, so we are doing it in if statment below*/
 	if (_capacity == 0)
@@ -314,10 +314,18 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 	/*if we have free vector then just allocating needed amount of memory*/
 	if (this->data == nullptr)
 	{
-		temp_ptr = (Type*)calloc(_capacity, sizeof(Type));
-		if (temp_ptr == nullptr)
+		try
 		{
-			throw(exception("Couldnt allocate memory in reserve(long long _capacity) func. If free statment."));
+			temp_ptr = new Type* [_capacity];
+			if (temp_ptr == nullptr)
+			{
+				throw(exception("Couldnt allocate memory in reserve(long long _capacity) func. If free statment."));
+			}
+		}
+		catch (const std::exception& ex)
+		{
+			cout << ex.what() << endl;
+			return *this;
 		}
 		this->data = temp_ptr;
 		this->capacity = _capacity;
@@ -336,12 +344,20 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 			erase(newSize, this->size - 1);		/* erasing useless*/
 		}
 			/*reallocating vec with capacity of prev vec*/
-		temp_ptr = (Type*)realloc(this->data, _capacity * sizeof(Type));
-		if (temp_ptr == nullptr)
+		try
 		{
-			/*if null*/
-			throw(exception("Couldnt reallocate poiner data in reserve(long long _capacity) func. Else transporting statment."));
+			temp_ptr = (Type**)realloc(this->data, _capacity * sizeof(Type*));
+			if (temp_ptr == nullptr)
+			{
+				throw(exception("Couldnt reallocate poiner data in reserve(long long _capacity) func. Else transporting statment."));
+			}
 		}
+		catch (const std::exception& ex)
+		{
+			cout << ex.what() << endl;
+			return *this;
+		}
+
 		this->data = temp_ptr;
 		this->capacity = _capacity;
 		this->size = newSize;									/*predetermine future size*/
@@ -378,50 +394,61 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 	/*if in range of prev size then just moving back ptr*/
 	if (_size < this->size)
 	{
-		Type* newBack = this->front + _size;
-		Type& _left = *newBack;
-		Type& _right = *this->back;
-		destroy_range(_left, _right);
+		Type** newBack = this->front + _size;
+		for (long long i = _size; i < this->size; i++)
+		{
+			delete this->front[i];
+			this->front[i] = nullptr;
+		}
 		this->back = newBack;
 		this->size = _size;
 		return *this;
 	}
 	/*if above range of prev size then moving back ptr (up to capacity limit) and nullifying data*/
 	if ((_size > this->size) && (_size <= this->capacity))
-	{
-		Type* temp = new Type;
-		if (temp == nullptr)
+	{	
+		try
 		{
-			throw(exception("Couldnt create temp element in resize(long long _size) func."));
+			/*nullifying future newly opened area*/
+			for (int i = 0; i < (_size - this->size); i++)
+			{
+				this->front[this->size + i] = new Type;
+				if (this->front[this->size + i] == nullptr)
+				{
+					throw(exception("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and lower then capacity."));
+				}
+				this->back++;
+				this->size++;
+			}
 		}
-		/*nullifying future newly opened area*/
-		for (int i = 0; i < (_size - this->size); i++)
+		catch (const std::exception& ex)
 		{
-			this->front[this->size + i] = std::move(*temp);		/*clearing place before move*/
+			cout << ex.what() << endl;
 		}
-		this->back = this->front + _size;
-		this->size = _size;
-		delete temp;
 		return *this;
 	}
 	/*if above range of prev capacity then allocating memory, nullifying data, and moving back ptr*/
 	if (_size > this->capacity)
 	{
 		this->reserve(calcNewCapacity(_size));
-		Type* temp = new Type;
-		if (temp == nullptr)
+		try
 		{
-			throw(exception("Couldnt create temp element in resize(long long _size) func."));
+			/*nullifying future newly opened area*/
+			for (int i = 0; i < (_size - this->size); i++)
+			{
+				this->front[this->size + i] = new Type;
+				if (this->front[this->size + i] == nullptr)
+				{
+					throw(exception("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and higher then capacity."));
+				}
+				this->back++;
+				this->size++;
+			}
 		}
-		/*nullifying future newly opened area*/
-		for (int i = 0; i < (_size - this->size); i++)
+		catch (const std::exception& ex)
 		{
-			this->front[this->size + i] = std::move(*temp);		/*clearing place before move*/
+			cout << ex.what() << endl;
 		}
-
-		this->back = this->front + _size;
-		this->size = _size;
-		delete temp;
 		return *this;
 	}
 	return *this;
@@ -448,7 +475,7 @@ inline MyVector<Type> MyVector<Type>::getRange(long long _from, long long _to)
 		if (_from == _to)
 		{
 			temp.reserve(1);
-			temp.pushBack(this->front[_from]);
+			temp.pushBack(*this->front[_from]);
 			return temp;
 		}
 		if (_to < _from)
@@ -458,14 +485,12 @@ inline MyVector<Type> MyVector<Type>::getRange(long long _from, long long _to)
 		}
 		long long newSize = _to - _from + 1;
 		temp.reserve(newSize);
-		temp.size = newSize;					/*predetermine future size*/
-		temp.front = temp.data;
-		temp.back = temp.data + newSize;		/*predetermine future back ptr*/
 
-		for (long long i = 0; i < newSize; i++)
+		for (long long i = 0; i < temp.capacity; i++)
 		{
-			temp[i] = (Type)this->front[_from + i];
+			temp.pushBack(*this->front[_from + i]);
 		}
+
 		return temp;
 	}
 	else
@@ -508,11 +533,17 @@ inline MyVector<Type>& MyVector<Type>::erase(long long _from, long long _to)
 
 		long long newSize = this->size - (_to - _from + 1);
 		long long rightLen = this->size - _to - 1;
-		Type& _first = *(this->front + _from);					/*First element to be destroyed*/
-		Type& _last = *(this->front + _to + 1);					/*First element after all will be destroyed*/
-		destroy_range(_first, _last);
 
-		memcpy_s(this->front + _from, rightLen * sizeof(Type), this->front + _to + 1, rightLen * sizeof(Type));
+		for (long long i = _from; i < _to + 1; i++)
+		{
+			delete this->front[i];
+		}
+
+		//memcpy_s(this->front + _from, rightLen * sizeof(Type), this->front + _to + 1, rightLen * sizeof(Type));
+		for (long long i = _to + 1; i < rightLen; i++)
+		{
+			*this->front[_from + i] = *this->front[_to + 1 + i];
+		}
 
 		this->size = newSize;
 		this->back = this->data + newSize + 1;
@@ -557,10 +588,10 @@ inline MyVector<Type>& MyVector<Type>::clear()
 	/*If not empty then clearing*/
 	if (!this->empty())
 	{
-		Type& _first = *(this->front);
-		Type& _last = *(this->front + this->size); /*adress of element after */
-		destroy_range(_first, _last);
-
+		for (int i = 0; i < this->size; i++)
+		{
+			delete this->front[i];
+		}
 		this->front = this->data;
 		this->back = this->data;
 		this->size = 0;
@@ -572,8 +603,7 @@ template<class Type>
 inline MyVector<Type>& MyVector<Type>::freeMyVector() {
 	if (this->data != nullptr)
 	{
-		if ((this->size*sizeof(Type)) != static_cast<long long>(this->back - this->front) || (this->front != this->data) ||
-			((this->front + this->size) != this->back))
+		if ((this->front != this->data) || ((this->front + this->size) != this->back))
 			/*if size is not equal to difference between back and front ptr then it is most likely to be uninitialised part of memory */
 		{
 			this->nullifyParams();
@@ -583,7 +613,7 @@ inline MyVector<Type>& MyVector<Type>::freeMyVector() {
 		{
 			this->clear();
 		}
-		free(this->data);
+		delete[] this->data;
 		this->capacity = 0;
 		this->data = nullptr;
 		this->front = nullptr;
@@ -617,7 +647,7 @@ inline const Type& MyVector<Type>::operator[](long long _index) const
 	{
 		throw(exception("Index is out of range. Cant reach this index."));
 	}
-	return *(this->front + _index);
+	return *this->front[_index];
 }
 
 template<class Type>
@@ -631,7 +661,7 @@ inline Type& MyVector<Type>::operator[](long long _index)
 	{
 		throw(exception("Index is out of range. Cant reach this index."));
 	}
-	return *(this->front + _index);
+	return *this->front[_index];
 }
 
 template<class Type>
@@ -726,7 +756,7 @@ inline void MyVector<Type>::copyData(const MyVector<Type>& _myVector)
 	/*Cycle for copying data*/
 	for (long long i = 0; i < _myVector.size; i++)
 	{
-		this->front[i] = (Type)_myVector[i];
+		*this->front[i] = _myVector[i];
 	}
 	this->size = _myVector.size;
 	this->back = this->front + this->size;
