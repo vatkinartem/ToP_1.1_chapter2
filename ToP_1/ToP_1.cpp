@@ -219,7 +219,7 @@ static void executeFunc(keep::Keeper& base) {
 		{
 			var = Keeper::vars::NONE;
 			mode = MODE::DEFAULT;
-			cout << "Awaiting mode..." << endl;
+			cout << "\nAwaiting mode..." << endl;
 			cin >> mode;
 			if (cin.fail())
 			{
@@ -233,10 +233,10 @@ static void executeFunc(keep::Keeper& base) {
 					<< MODE::EMPLACE << "\ndelete - " << MODE::DELETE << "\nexit - " << MODE::EXIT << endl;
 				break;
 			case MODE::ADD:
-				cout << "Print string to be added. Input according to the hint below (atherwise it wont be added). Separating with spaces.\nIf field is missing then print \"-\"" << endl;
+				cout << "\nPrint string to be added. Input according to the hint below (atherwise it wont be added). Separating with spaces.\nIf field is missing then print \"-\"" << endl;
 				cout << "For student structure is (without figure brackets)	{Student f_i_o group profesion 1 0.0}" << endl;			/*then Student fio group profesion 1 0.0 */
 				cout << "For student structure is (without figure brackets) {Professor f_i_o (group1 group2) (sub1 sub2)}" << endl;			/*then Professor fio (group1 group2) (sub1 sub2) */
-				cout << "For student structure is (without figure brackets) {Student f_i_o post phone areaOfResponse}" << endl;			/*then AdminStaff fio post phone areaOfResponse */
+				cout << "For student structure is (without figure brackets) {AdminStaff f_i_o post phone areaOfResponse}\n" << endl;			/*then AdminStaff fio post phone areaOfResponse */
 				cin >> head;
 				getline(cin, str, '\n');
 				
@@ -263,7 +263,15 @@ static void executeFunc(keep::Keeper& base) {
 				cout << "Class name..." << endl;
 				cin >> head;
 				var = strToVar(head);
-	
+				if (var == Keeper::vars::NONE)
+				{
+					throw(exception("Wrong class name"));
+				}
+
+				cout << "\nPrint string to be added. Input according to the hint below (atherwise it wont be added). Separating with spaces.\nIf field is missing then print \"-\"" << endl;
+				cout << "For student structure is (without figure brackets)	{Student f_i_o group profesion 1 0.0}" << endl;			/*then Student fio group profesion 1 0.0 */
+				cout << "For student structure is (without figure brackets) {Professor f_i_o (group1 group2) (sub1 sub2)}" << endl;			/*then Professor fio (group1 group2) (sub1 sub2) */
+				cout << "For student structure is (without figure brackets) {AdminStaff f_i_o post phone areaOfResponse}" << endl;			/*then AdminStaff fio post phone areaOfResponse */
 				cout << "String with validate format..." << endl;
 				cin >> head;
 				getline(cin, str, '\n');
@@ -276,7 +284,7 @@ static void executeFunc(keep::Keeper& base) {
 				{
 					break;
 				}
-
+				
 				if (var == Keeper::vars::STUDENT)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 6));
@@ -307,7 +315,7 @@ static void executeFunc(keep::Keeper& base) {
 					tempa.setFio(words[1]);
 					tempa.setPost(words[2]);
 					tempa.setPhone(words[3]);
-					tempa.setAreaOfRespons(std::move(words[4]));
+					tempa.setAreaOfRespons(words[4]);
 					base.getAdminStaff().emplace(temp, std::move(tempa));
 				}
 				

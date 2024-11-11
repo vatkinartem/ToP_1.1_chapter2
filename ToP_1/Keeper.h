@@ -29,7 +29,7 @@ public:
 	Keeper();
 	Keeper(const Keeper& source);
 	Keeper(Keeper&& source) noexcept;
-	~Keeper();
+	virtual ~Keeper();
 	MyVector<Student>& getStudens() const;
 	MyVector<Professor>& getProfessors() const;
 	MyVector<AdminStaff>& getAdminStaff() const;

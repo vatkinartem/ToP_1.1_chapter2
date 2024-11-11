@@ -22,7 +22,7 @@ public:
     AdminStaff();
     AdminStaff(const AdminStaff& _source);
     AdminStaff(AdminStaff&& _source) noexcept;
-    ~AdminStaff();
+    virtual ~AdminStaff();
     virtual string getClassName() const override;
     virtual string getStr() const override;
     void moveSwap(AdminStaff& _source) noexcept;

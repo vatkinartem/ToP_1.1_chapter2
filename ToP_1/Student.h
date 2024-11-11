@@ -22,7 +22,7 @@ public:
     Student(string& _fio, string& _group, string& _profession, int _curCourse = 0, double _avgMark = 0.0);
     Student(const Student& _student);
     Student(Student&& _student) noexcept;
-     ~Student();
+    virtual ~Student();
     void moveSwap(Student& _source) noexcept;
     virtual string getClassName() const override;
     virtual string getStr() const override;

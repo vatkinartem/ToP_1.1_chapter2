@@ -98,10 +98,10 @@ AdminStaff& AdminStaff::operator=(const AdminStaff& _adminstaff)
 
 AdminStaff& AdminStaff::operator=(AdminStaff&& _adminstaff) noexcept
 {
-	this->fio = move(_adminstaff.fio);
-	this->post = move(_adminstaff.post);
-	this->phone = move(_adminstaff.phone);
-	this->areaOfRespons = move(_adminstaff.areaOfRespons);
+	this->fio = std::move(_adminstaff.fio);
+	this->post = std::move(_adminstaff.post);
+	this->phone = std::move(_adminstaff.phone);
+	this->areaOfRespons = std::move(_adminstaff.areaOfRespons);
 	return *this;
 }
 

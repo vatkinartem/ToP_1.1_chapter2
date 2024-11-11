@@ -13,7 +13,7 @@ public:
 	MyVector();
 	MyVector(const MyVector<Type>& _myVector);
 	MyVector(MyVector<Type>&& _myVector) noexcept;
-	 ~MyVector();
+	virtual ~MyVector();
 	string getClassName() const;
 	Type** getData() const;
 	Type** getFront() const;
@@ -285,6 +285,7 @@ inline void MyVector<Type>::emplace(long long index, const Type& value)
 		throw(exception("Index is out of range. Cant reach this index."));
 	}
 	this->erase(index);
+	this->front[index] = new Type;
 	*this->front[index] = value;
 }
 
@@ -299,7 +300,6 @@ inline void MyVector<Type>::emplace(long long index, Type&& value)
 	{
 		throw(exception("Index is out of range. Cant reach this index."));
 	}
-	this->erase(index);
 	*this->front[index] = std::move(value);
 }
 
@@ -541,7 +541,7 @@ template<class Type>
 inline MyVector<Type>& MyVector<Type>::erase(long long _from, long long _to)
 {
 	/*If empty then return*/
-	if (this->empty())
+	if (this->front == this->back)
 	{
 		return *this;
 	}
@@ -560,21 +560,22 @@ inline MyVector<Type>& MyVector<Type>::erase(long long _from, long long _to)
 		}
 
 		long long newSize = this->size - (_to - _from + 1);
-		long long rightLen = this->size - _to - 1;
+		long long rightLen = this->size - _to - 1;			/*right part from erasing element/s. This part wil be shifted at the left.*/
 
-		for (long long i = _from; i < _to + 1; i++)
+		/*transporting data if needed*/
+		for (long long i = _to + 1; i < rightLen; i++)
+		{
+			*this->front[_from + i] = std::move(*this->front[_to + 1 + i]);
+		}
+
+		/*deallocating memory of now unused elements (if needed and it WILL be needed at least one time)*/
+		for (long long  i = newSize; i < this->size; i++)
 		{
 			delete this->front[i];
 		}
 
-		//memcpy_s(this->front + _from, rightLen * sizeof(Type), this->front + _to + 1, rightLen * sizeof(Type));
-		for (long long i = _to + 1; i < rightLen; i++)
-		{
-			*this->front[_from + i] = *this->front[_to + 1 + i];
-		}
-
 		this->size = newSize;
-		this->back = this->data + newSize + 1;
+		this->back = this->data + this->size;
 	}
 	else
 	{
@@ -614,7 +615,7 @@ template<class Type>
 inline MyVector<Type>& MyVector<Type>::clear()
 {
 	/*If not empty then clearing*/
-	if (!this->empty())
+	if (this->front != this->back)
 	{
 		for (int i = 0; i < this->size; i++)
 		{
@@ -637,7 +638,7 @@ inline MyVector<Type>& MyVector<Type>::freeMyVector() {
 			this->nullifyParams();
 			return *this;
 		}
-		if (!this->empty())
+		if (this->front != this->back)
 		{
 			this->clear();
 		}
