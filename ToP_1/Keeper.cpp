@@ -4,18 +4,69 @@
 #include <fstream>
 #include <string>
 
-using namespace std;
-using namespace myvec;
-using namespace keep;
-
 #ifndef KEEPER_CPP
 #define KEEPER_CPP
 
 
 namespace keep {
 
+
+	MyVector<string> extractWordsBetweenChars(string str, char c0, char c1) {
+		MyVector<string> words;
+		bool inRange = false;
+		string temp = "";
+		for (char c : str)
+		{
+			if (c == c0)
+			{
+				inRange = true;
+				continue;
+			}
+			if (c == c1)
+			{
+				inRange = false;
+				words.pushBack(std::move(temp));
+				continue;
+			}
+			if (inRange)
+			{
+				temp += c;
+			}
+		}
+		return words;
+	}
+
+	MyVector<string> extractFirstNWords(string str, char c0, int num) {
+		MyVector<string> words;
+		string temp = "";
+		bool inWord = false;
+		if (str[str.size() - 1] != '\n')
+		{
+			str.push_back('\n');
+		}
+		for (char c : str)
+		{
+			if ((c != c0) && (c != '\n') && (c != '\0'))
+			{
+				inWord = true;
+				temp += c;
+				continue;
+			}
+			if ((inWord) && ((c == c0) || (c == '\n') || (c == '\0')))
+			{
+				words.pushBack(std::move(temp));
+				inWord = false;
+				if (words.getSize() == num)
+				{
+					break;
+				}
+			}
+		}
+		return words;
+	}
+
 	std::string getStrStud(const Student& _source) {
-		string _str = "Student " + _source.getFio() + " " \
+		std::string _str = "Student " + _source.getFio() + " " \
 			+ _source.getGroup() + " " + _source.getProfession() + " " \
 			+ std::to_string(_source.getCurCourse()) + " " + std::to_string(_source.getAvgMark()) + " ";
 		return _str;
@@ -85,6 +136,21 @@ Keeper::~Keeper()
 #ifdef _DEBUG
 	cout << "~" << this->getClassName() << "() with adress " << this << endl;
 #endif // _DEBUG
+}
+
+MyVector<Student>& Keeper::getStudens() const
+{
+	return (MyVector<Student>&)this->students;
+}
+
+MyVector<Professor>& Keeper::getProfessors() const
+{
+	return (MyVector<Professor>&)this->professors;
+}
+
+MyVector<AdminStaff>& Keeper::getAdminStaff() const
+{
+	return (MyVector<AdminStaff>&)this->adminStaff;
 }
 
 string Keeper::getClassName() const
@@ -304,61 +370,6 @@ void Keeper::addEntry(const string& _str)
 		this->adminStaff.pushBack(std::move(temp));
 	}
 }
-
-MyVector<string> Keeper::extractWordsBetweenChars(string str, char c0, char c1) {
-	MyVector<string> words;
-	bool inRange = false;
-	string temp = "";
-	for (char c : str)
-	{
-		if (c == c0)
-		{
-			inRange = true;
-			continue;
-		}
-		if (c == c1)
-		{
-			inRange = false;
-			words.pushBack(std::move(temp));
-			continue;
-		}
-		if (inRange)
-		{
-			temp += c;
-		}
-	}
-	return words;
-}
-
-MyVector<string> Keeper::extractFirstNWords(string str, char c0, int num) {
-	MyVector<string> words;
-	string temp = "";
-	bool inWord = false;
-	if (str[str.size() - 1] != '\n')
-	{
-		str.push_back('\n');
-	}
-	for (char c : str)
-	{
-		if ((c != c0) && (c != '\n') && (c != '\0'))
-		{
-			inWord = true;
-			temp += c;
-			continue;
-		}
-		if ((inWord) && ((c == c0) || (c == '\n') || (c == '\0')))
-		{
-			words.pushBack(std::move(temp));
-			inWord = false;
-			if (words.getSize() == num)
-			{
-				break;
-			}
-		}
-	}
-	return words;
-}
-
 
 Keeper& Keeper::operator=(const Keeper& right)
 {

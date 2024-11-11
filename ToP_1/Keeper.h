@@ -9,9 +9,6 @@
 #ifndef KEEPER_H
 #define KEEPER_H
 
-using namespace std;
-using namespace myvec;
-
 namespace keep {
 
 
@@ -23,22 +20,19 @@ private:
 	MyVector<AdminStaff> adminStaff;
 	string saveFile;
 	string loadFile;
-
-	friend std::string getStrStud(const Student& _source);
-	friend std::string getStrProf(const Professor& _source);
-	friend std::string getStrAdmi(const AdminStaff& _source);
 protected:
 	Keeper inputDataFromFile(ifstream& _in);
 	template <class Type>
 	MyVector<Type> parseString(string str);
-	MyVector<string> extractWordsBetweenChars(string str, char c0, char c1);
-	MyVector<string> extractFirstNWords(string str, char c0, int num = -1);
 
 public:
 	Keeper();
 	Keeper(const Keeper& source);
 	Keeper(Keeper&& source) noexcept;
 	~Keeper();
+	MyVector<Student>& getStudens() const;
+	MyVector<Professor>& getProfessors() const;
+	MyVector<AdminStaff>& getAdminStaff() const;
 	string getClassName() const;
 	void clearKeeper();
 	void setDefaults();
@@ -53,6 +47,20 @@ public:
 	void addEntry(const string& _str);
 	Keeper& operator= (const Keeper& right);
 	Keeper& operator= (Keeper&& right) noexcept;
+
+	friend std::string getStrStud(const Student& _source);
+	friend std::string getStrProf(const Professor& _source);
+	friend std::string getStrAdmi(const AdminStaff& _source);
+
+	friend MyVector<string> extractWordsBetweenChars(string str, char c0, char c1);
+	friend MyVector<string> extractFirstNWords(string str, char c0, int num);
+
+	enum vars {
+		STUDENT,
+		PROFESSOR,
+		ADMINSTAFF,
+		NONE
+	};
 };
 
 #endif // !KEEPER_H

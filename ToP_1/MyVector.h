@@ -3,8 +3,6 @@
 #ifndef MYVECTOR_H
 #define MYVECTOR_H
 
-using namespace std;
-
 namespace myvec {
 /*My vector container with lesser functionality and optimisation*/
 template <class Type>
@@ -26,6 +24,8 @@ public:
 	void pushBack(Type&& value) noexcept;
 	void pushBack(MyVector<Type>&& _source) noexcept;
 	void popBack();
+	void emplace(long long index, const Type& value);
+	void emplace(long long index, Type&& value);
 
 	MyVector<Type>& reserve(long long _capacity);
 	MyVector<Type>& resize(long long _size);
@@ -86,8 +86,6 @@ private:
 
 #ifndef MYVECTOR_CPP
 #define MYVECTOR_CPP
-
-using namespace std;
 
 namespace myvec {
 
@@ -273,6 +271,36 @@ inline void MyVector<Type>::popBack()
 	{
 		this->erase(this->size - 1);
 	}
+}
+
+template<class Type>
+inline void MyVector<Type>::emplace(long long index, const Type& value)
+{
+	if (this->front == this->back)
+	{
+		throw(exception("Vector is empty. Cant reach this index."));
+	}
+	if ((index < 0) || (index > (this->size - 1)))
+	{
+		throw(exception("Index is out of range. Cant reach this index."));
+	}
+	this->erase(index);
+	*this->front[index] = value;
+}
+
+template<class Type>
+inline void MyVector<Type>::emplace(long long index, Type&& value)
+{
+	if (this->front == this->back)
+	{
+		throw(exception("Vector is empty. Cant reach this index."));
+	}
+	if ((index < 0) || (index > (this->size - 1)))
+	{
+		throw(exception("Index is out of range. Cant reach this index."));
+	}
+	this->erase(index);
+	*this->front[index] = std::move(value);
 }
 
 template<class Type>
