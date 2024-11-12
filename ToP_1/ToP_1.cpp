@@ -223,7 +223,7 @@ static void executeFunc(keep::Keeper& base) {
 			cin >> mode;
 			if (cin.fail())
 			{
-				throw(std::exception("Cant parse to string"));
+				throw std::exception("Cant parse to string") ;
 			}
 
 			switch (mode)
@@ -243,7 +243,7 @@ static void executeFunc(keep::Keeper& base) {
 				str = head + str;
 				if (cin.fail())
 				{
-					throw(std::exception("Cant parse to string"));
+					throw std::exception("Cant parse to string" );
 				}
 				if (isValidString(str))
 				{
@@ -257,7 +257,7 @@ static void executeFunc(keep::Keeper& base) {
 				cin >> temp;
 				if (cin.fail())
 				{
-					throw(std::exception("Cant parse to string"));
+					throw std::exception("Cant parse to string") ;
 				}
 
 				cout << "Class name..." << endl;
@@ -265,7 +265,7 @@ static void executeFunc(keep::Keeper& base) {
 				var = strToVar(head);
 				if (var == Keeper::vars::NONE)
 				{
-					throw(std::exception("Wrong class name"));
+					throw std::exception("Wrong class name") ;
 				}
 
 				cout << "\nPrint string to be added. Input according to the hint below (atherwise it wont be added). Separating with spaces.\nIf field is missing then print \"-\"" << endl;
@@ -278,7 +278,7 @@ static void executeFunc(keep::Keeper& base) {
 				str = head + str;
 				if (cin.fail())
 				{
-					throw(std::exception("Cant parse to string"));
+					throw std::exception("Cant parse to string") ;
 				}
 				if (!isValidString(str))
 				{
@@ -288,7 +288,7 @@ static void executeFunc(keep::Keeper& base) {
 				if (var == Keeper::vars::STUDENT)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 6));
-					if (words.getSize() < 6) { throw(std::exception("Not enought fields for Student")); break; }
+					if (words.getSize() < 6) { throw std::exception("Not enought fields for Student") ; break; }
 					Student temps = { words[1] , words[2] , words[3] , stoi(words[4]) , stod(words[5]) };
 					base.getStudens().emplace(temp, std::move(temps));
 				}
@@ -296,12 +296,12 @@ static void executeFunc(keep::Keeper& base) {
 				{
 					/*then Professor fio (group1 group2) (sub1 sub2) */
 					words = std::move(extractFirstNWords1(str, ' ', 2));
-					if (words.getSize() < 2) { throw(std::exception("Not enought fields for Professor")); break; }
+					if (words.getSize() < 2) { throw std::exception("Not enought fields for Professor") ; break; }
 					Professor tempp;
 					tempp.setFio(words[1]);
 
 					words = extractWordsBetweenChars1(str, '(', ')');
-					if (words.getSize() < 2) { throw(std::exception("Not enought () fields for Professor"));  break; }
+					if (words.getSize() < 2) { throw std::exception("Not enought () fields for Professor") ;  break; }
 					MyVector<string> words2;		/*for text field in brekets*/
 					words2 = std::move(extractFirstNWords1(words[0], ' ', -1));
 					tempp.getListOfGroups().pushBack(std::move(words2));
@@ -314,7 +314,7 @@ static void executeFunc(keep::Keeper& base) {
 				else if (var == Keeper::vars::ADMINSTAFF)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 5));
-					if (words.getSize() < 5) { throw(std::exception("Not enought fields for AdminStaff")); break; }
+					if (words.getSize() < 5) { throw std::exception("Not enought fields for AdminStaff"); break; }
 					AdminStaff tempa;
 					tempa.setFio(words[1]);
 					tempa.setPost(words[2]);
@@ -331,14 +331,14 @@ static void executeFunc(keep::Keeper& base) {
 				cin >> temp;
 				if (cin.fail())
 				{
-					throw(std::exception("Cant parse to string"));
+					throw std::exception("Cant parse to string" );
 				}
 
 				cout << "Class name..." << endl;
 				cin >> head;
 				if (cin.fail())
 				{
-					throw(std::exception("Cant parse to string"));
+					throw std::exception("Cant parse to string");
 				}
 				var = strToVar(head);
 				if (var == Keeper::vars::STUDENT)
@@ -402,11 +402,11 @@ int main()
 			cin >> cmnd_int;
 			if (cin.fail())
 			{
-				throw(std::exception("Non numeric character found"));
+				throw std::exception("Non numeric character found") ;
 			}
 			if (((COM::COM)cmnd_int < COM::DEFAULT) || ((COM::COM)cmnd_int > COM::EXIT))
 			{
-				throw(std::exception("Wrong command"));
+				throw std::exception("Wrong command") ;
 			}
 			cmnd = (COM::COM)cmnd_int;
 
