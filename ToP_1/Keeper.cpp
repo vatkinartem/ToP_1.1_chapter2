@@ -182,11 +182,11 @@ void Keeper::saveToFile()
 		cin >> ans;
 		if (cin.fail())
 		{
-			throw(exception("Cant convert to string."));
+			throw(std::exception("Cant convert to string."));
 		}
 		if ((ans != "y") && (ans != "n"))
 		{
-			throw(exception("Wrong input. It has to be \"y\" or \"n\" "));
+			throw(std::exception("Wrong input. It has to be \"y\" or \"n\" "));
 		}
 		if (ans == "n")
 		{
@@ -214,7 +214,7 @@ void Keeper::saveToFile()
 		out.close();
 		cout << "Saving to file \"" << this->saveFile << "\" has been completed.\n" << endl;
 	}
-	catch (const exception& ex)
+	catch (const std::exception& ex)
 	{
 		cin.clear();
 		char c;
@@ -237,11 +237,11 @@ void Keeper::loadFromFile()
 		cin >> ans;
 		if (cin.fail())
 		{
-			throw(exception("Cant convert to string."));
+			throw(std::exception("Cant convert to string."));
 		}
 		if ((ans != "y") && (ans != "n"))
 		{
-			throw(exception("Wrong input. It has to be \"y\" or \"n\" "));
+			throw(std::exception("Wrong input. It has to be \"y\" or \"n\" "));
 		}
 		if (ans == "n")
 		{
@@ -267,7 +267,7 @@ void Keeper::loadFromFile()
 		cout << "Loading from file \"" << this->saveFile << "\" has been completed.\n" << endl;
 		in.close();
 	}
-	catch (const exception& ex)
+	catch (const std::exception& ex)
 	{
 		cin.clear();
 		char c;

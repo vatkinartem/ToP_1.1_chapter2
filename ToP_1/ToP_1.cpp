@@ -223,7 +223,7 @@ static void executeFunc(keep::Keeper& base) {
 			cin >> mode;
 			if (cin.fail())
 			{
-				throw(exception("Cant parse to string"));
+				throw(std::exception("Cant parse to string"));
 			}
 
 			switch (mode)
@@ -243,7 +243,7 @@ static void executeFunc(keep::Keeper& base) {
 				str = head + str;
 				if (cin.fail())
 				{
-					throw(exception("Cant parse to string"));
+					throw(std::exception("Cant parse to string"));
 				}
 				if (isValidString(str))
 				{
@@ -257,7 +257,7 @@ static void executeFunc(keep::Keeper& base) {
 				cin >> temp;
 				if (cin.fail())
 				{
-					throw(exception("Cant parse to string"));
+					throw(std::exception("Cant parse to string"));
 				}
 
 				cout << "Class name..." << endl;
@@ -265,7 +265,7 @@ static void executeFunc(keep::Keeper& base) {
 				var = strToVar(head);
 				if (var == Keeper::vars::NONE)
 				{
-					throw(exception("Wrong class name"));
+					throw(std::exception("Wrong class name"));
 				}
 
 				cout << "\nPrint string to be added. Input according to the hint below (atherwise it wont be added). Separating with spaces.\nIf field is missing then print \"-\"" << endl;
@@ -278,7 +278,7 @@ static void executeFunc(keep::Keeper& base) {
 				str = head + str;
 				if (cin.fail())
 				{
-					throw(exception("Cant parse to string"));
+					throw(std::exception("Cant parse to string"));
 				}
 				if (!isValidString(str))
 				{
@@ -327,14 +327,14 @@ static void executeFunc(keep::Keeper& base) {
 				cin >> temp;
 				if (cin.fail())
 				{
-					throw(exception("Cant parse to string"));
+					throw(std::exception("Cant parse to string"));
 				}
 
 				cout << "Class name..." << endl;
 				cin >> head;
 				if (cin.fail())
 				{
-					throw(exception("Cant parse to string"));
+					throw(std::exception("Cant parse to string"));
 				}
 				var = strToVar(head);
 				if (var == Keeper::vars::STUDENT)
@@ -398,11 +398,11 @@ int main()
 			cin >> cmnd_int;
 			if (cin.fail())
 			{
-				throw(exception("Non numeric character found"));
+				throw(std::exception("Non numeric character found"));
 			}
 			if (((COM::COM)cmnd_int < COM::DEFAULT) || ((COM::COM)cmnd_int > COM::EXIT))
 			{
-				throw(exception("Wrong command"));
+				throw(std::exception("Wrong command"));
 			}
 			cmnd = (COM::COM)cmnd_int;
 
@@ -433,7 +433,7 @@ int main()
 				break;
 			}
 		}
-		catch (const exception& ex)
+		catch (const std::exception& ex)
 		{
 			cin.clear();
 			char c;

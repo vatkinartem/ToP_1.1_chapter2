@@ -178,7 +178,7 @@ inline void MyVector<Type>::pushBack(const Type& value)
 		this->front[this->size] = new Type;
 		if (this->front[this->size] == nullptr)
 		{
-			throw(exception("Couldnt allocate memory in pushBack(const MyVector<Type>& _source) func."));
+			throw(std::exception("Couldnt allocate memory in pushBack(const MyVector<Type>& _source) func."));
 		}
 		*this->front[this->size] = value;
 		this->size++;
@@ -225,7 +225,7 @@ inline void MyVector<Type>::pushBack(Type&& value) noexcept
 		this->front[this->size] = new Type;
 		if (this->front[this->size] == nullptr)
 		{
-			throw(exception("Couldnt allocate memory in pushBack(const MyVector<Type>& _source) func."));
+			throw(std::exception("Couldnt allocate memory in pushBack(const MyVector<Type>& _source) func."));
 		}
 		*this->front[this->size] = std::move(value);
 		this->size++;
@@ -278,11 +278,11 @@ inline void MyVector<Type>::emplace(long long index, const Type& value)
 {
 	if (this->front == this->back)
 	{
-		throw(exception("Vector is empty. Cant reach this index."));
+		throw(std::exception("Vector is empty. Cant reach this index."));
 	}
 	if ((index < 0) || (index > (this->size - 1)))
 	{
-		throw(exception("Index is out of range. Cant reach this index."));
+		throw(std::exception("Index is out of range. Cant reach this index."));
 	}
 	this->erase(index);
 	this->front[index] = new Type;
@@ -294,11 +294,11 @@ inline void MyVector<Type>::emplace(long long index, Type&& value)
 {
 	if (this->front == this->back)
 	{
-		throw(exception("Vector is empty. Cant reach this index."));
+		throw(std::exception("Vector is empty. Cant reach this index."));
 	}
 	if ((index < 0) || (index > (this->size - 1)))
 	{
-		throw(exception("Index is out of range. Cant reach this index."));
+		throw(std::exception("Index is out of range. Cant reach this index."));
 	}
 	*this->front[index] = std::move(value);
 }
@@ -347,7 +347,7 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 			temp_ptr = new Type* [_capacity];
 			if (temp_ptr == nullptr)
 			{
-				throw(exception("Couldnt allocate memory in reserve(long long _capacity) func. If free statment."));
+				throw(std::exception("Couldnt allocate memory in reserve(long long _capacity) func. If free statment."));
 			}
 		}
 		catch (const std::exception& ex)
@@ -377,7 +377,7 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 			temp_ptr = (Type**)realloc(this->data, _capacity * sizeof(Type*));
 			if (temp_ptr == nullptr)
 			{
-				throw(exception("Couldnt reallocate poiner data in reserve(long long _capacity) func. Else transporting statment."));
+				throw(std::exception("Couldnt reallocate poiner data in reserve(long long _capacity) func. Else transporting statment."));
 			}
 		}
 		catch (const std::exception& ex)
@@ -443,7 +443,7 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 				this->front[this->size + i] = new Type;
 				if (this->front[this->size + i] == nullptr)
 				{
-					throw(exception("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and lower then capacity."));
+					throw(std::exception("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and lower then capacity."));
 				}
 				this->back++;
 				this->size++;
@@ -467,7 +467,7 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 				this->front[this->size + i] = new Type;
 				if (this->front[this->size + i] == nullptr)
 				{
-					throw(exception("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and higher then capacity."));
+					throw(std::exception("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and higher then capacity."));
 				}
 				this->back++;
 				this->size++;
@@ -670,11 +670,11 @@ inline const Type& MyVector<Type>::operator[](long long _index) const
 {
 	if (this->front == this->back)
 	{
-		throw(exception("Vector is empty. Cant reach this index."));
+		throw(std::exception("Vector is empty. Cant reach this index."));
 	}
 	if ((_index < 0) || (_index > (this->size - 1)))
 	{
-		throw(exception("Index is out of range. Cant reach this index."));
+		throw(std::exception("Index is out of range. Cant reach this index."));
 	}
 	return *this->front[_index];
 }
@@ -684,11 +684,11 @@ inline Type& MyVector<Type>::operator[](long long _index)
 {
 	if (this->front == this->back)
 	{
-		throw(exception("Vector is empty. Cant reach this index."));
+		throw(std::exception("Vector is empty. Cant reach this index."));
 	}
 	if ((_index < 0) || (_index > (this->size - 1)))
 	{
-		throw(exception("Index is out of range. Cant reach this index."));
+		throw(std::exception("Index is out of range. Cant reach this index."));
 	}
 	return *this->front[_index];
 }
@@ -799,7 +799,7 @@ long long MyVector<Type>::calcNewCapacity(long long num)
 	/*if after mod(num, RESERVE_STEP) result is NOT zero then changing capacity*/
 	if ((abs(num % RESERVE_STEP) != 0))
 	{
-		newCapacity = (long long)(floor((1.0 * num / RESERVE_STEP) + 1) * RESERVE_STEP);
+		newCapacity = (long long)(std::floor((1.0 * num / RESERVE_STEP) + 1) * RESERVE_STEP);
 	}
 	return newCapacity;
 }
