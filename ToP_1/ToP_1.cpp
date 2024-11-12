@@ -159,17 +159,20 @@ static bool isValidString(std::string& str) {
 		{
 			if (stoi(word[4]) == errno)
 			{
+				throw MyException("Cant parse to integer");
 				return false;
 			}
 			else
 			{
 				if (!is_integer(stoi(word[4])))
 				{
+					throw MyException("Non integer input found");
 					return false;
 				}
 			}
 			if (stod(word[5]) == errno)
 			{
+				throw MyException("Non double input found");
 				return false;
 			}
 			return true;
