@@ -1,5 +1,6 @@
 #pragma once
 #include "MyException.h"
+#include <math.h>
 
 #ifndef MYVECTOR_H
 #define MYVECTOR_H
@@ -11,6 +12,7 @@ namespace myvec {
 template <class Type>
 class MyVector
 {
+	template <class Type>
 	friend void swap(MyVector<Type>& _dest, MyVector<Type>& _source) noexcept;
 public:
 	MyVector();
@@ -802,7 +804,7 @@ long long MyVector<Type>::calcNewCapacity(long long num)
 	/*if after mod(num, RESERVE_STEP) result is NOT zero then changing capacity*/
 	if ((abs(num % RESERVE_STEP) != 0))
 	{
-		newCapacity = (long long)(std::floor((1.0 * num / RESERVE_STEP) + 1) * RESERVE_STEP);
+		newCapacity = (long long)(floor((1.0 * num / RESERVE_STEP) + 1) * RESERVE_STEP);
 	}
 	return newCapacity;
 }

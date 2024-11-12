@@ -85,7 +85,7 @@ static MyVector<string> extractFirstNWords1(string str, char c0, int num) {
 
 static bool is_integer(float k)
 {
-	return std::floor(k) == k;
+	return floor(k) == k;
 }
 
 namespace COM {
