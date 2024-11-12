@@ -12,9 +12,10 @@ namespace myvec {
 template <class Type>
 class MyVector
 {
-	template <class Type>
-	friend void swap(MyVector<Type>& _dest, MyVector<Type>& _source) noexcept;
+	
 public:
+	friend void swap(MyVector<Type>& _dest, MyVector<Type>& _source) noexcept;
+
 	MyVector();
 	MyVector(const MyVector<Type>& _myVector);
 	MyVector(MyVector<Type>&& _myVector) noexcept;
@@ -514,7 +515,7 @@ inline MyVector<Type> MyVector<Type>::getRange(long long _from, long long _to)
 		if (_to < _from)
 		{
 			cout << "Warning! Right index is smaller than left index. Swapping." << endl;
-			myvec::swap(_from, _to);
+			std::swap(_from, _to);
 		}
 		long long newSize = _to - _from + 1;
 		temp.reserve(newSize);
