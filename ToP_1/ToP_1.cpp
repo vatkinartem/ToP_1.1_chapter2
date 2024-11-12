@@ -145,13 +145,17 @@ static bool isValidString(std::string& str) {
 	Keeper::vars ourVar = Keeper::vars::NONE;
 	std::istringstream iss;
 	word.pushBack(std::move(extractFirstNWords1(str, ' ', -1)));
+	if (word.getSize() < 5 )
+	{
+		return false;
+	}
 	ourVar = strToVar(word[0]);
 
 
 	if (ourVar == Keeper::vars::STUDENT)				/*then Student fio group profesion 1 0.0 */
 	{
 		word.pushBack(std::move(extractFirstNWords1(str, ' ', -1)));
-		if (word.getSize() == 6)
+		if (word.getSize() >= 6)
 		{
 			if (stoi(word[4]) == errno)
 			{
@@ -243,11 +247,17 @@ static void executeFunc(keep::Keeper& base) {
 				str = head + str;
 				if (cin.fail())
 				{
-					throw MyException("Cant parse to string" );
+					throw MyException("Cant parse to string");
 				}
 				if (isValidString(str))
 				{
+					cout << "Adding entry" << endl;
 					base.addEntry(str);
+					cout << "Added line succesfully" << endl;
+				}
+				else
+				{
+					throw MyException("Invalid string");
 				}
 				break;
 
@@ -282,13 +292,13 @@ static void executeFunc(keep::Keeper& base) {
 				}
 				if (!isValidString(str))
 				{
-					break;
+					throw MyException("Ivalid string");
 				}
 				
 				if (var == Keeper::vars::STUDENT)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 6));
-					if (words.getSize() < 6) { throw MyException("Not enought fields for Student") ; break; }
+					if (words.getSize() < 6) { throw MyException("Not enought fields for Student"); }
 					Student temps = { words[1] , words[2] , words[3] , stoi(words[4]) , stod(words[5]) };
 					base.getStudens().emplace(temp, std::move(temps));
 				}
@@ -296,12 +306,12 @@ static void executeFunc(keep::Keeper& base) {
 				{
 					/*then Professor fio (group1 group2) (sub1 sub2) */
 					words = std::move(extractFirstNWords1(str, ' ', 2));
-					if (words.getSize() < 2) { throw MyException("Not enought fields for Professor") ; break; }
+					if (words.getSize() < 2) { throw MyException("Not enought fields for Professor") ; }
 					Professor tempp;
 					tempp.setFio(words[1]);
 
 					words = extractWordsBetweenChars1(str, '(', ')');
-					if (words.getSize() < 2) { throw MyException("Not enought () fields for Professor") ;  break; }
+					if (words.getSize() < 2) { throw MyException("Not enought () fields for Professor") ; }
 					MyVector<string> words2;		/*for text field in brekets*/
 					words2 = std::move(extractFirstNWords1(words[0], ' ', -1));
 					tempp.getListOfGroups().pushBack(std::move(words2));
@@ -314,7 +324,7 @@ static void executeFunc(keep::Keeper& base) {
 				else if (var == Keeper::vars::ADMINSTAFF)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 5));
-					if (words.getSize() < 5) { throw MyException("Not enought fields for AdminStaff"); break; }
+					if (words.getSize() < 5) { throw MyException("Not enought fields for AdminStaff"); }
 					AdminStaff tempa;
 					tempa.setFio(words[1]);
 					tempa.setPost(words[2]);
@@ -322,7 +332,7 @@ static void executeFunc(keep::Keeper& base) {
 					tempa.setAreaOfRespons(words[4]);
 					base.getAdminStaff().emplace(temp, std::move(tempa));
 				}
-				
+				cout << "Emplaced string succesfully" << endl;
 				break;
 
 			case MODE::DELETE:
@@ -344,14 +354,17 @@ static void executeFunc(keep::Keeper& base) {
 				if (var == Keeper::vars::STUDENT)
 				{
 					base.getStudens().erase(temp);
+					cout << "Deleted Student element with index " << temp << endl;
 				}
 				else if (var == Keeper::vars::PROFESSOR)
 				{
 					base.getProfessors().erase(temp);
+					cout << "Deleted Professors element with index " << temp << endl;
 				}
 				else if (var == Keeper::vars::ADMINSTAFF)
 				{
 					base.getAdminStaff().erase(temp);
+					cout << "Deleted AdminStaff element with index " << temp << endl;
 				}
 
 				break;
