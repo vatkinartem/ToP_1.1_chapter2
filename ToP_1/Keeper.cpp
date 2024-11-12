@@ -7,7 +7,7 @@
 #ifndef KEEPER_CPP
 #define KEEPER_CPP
 
-using std::exception;
+ 
 
 namespace keep {
 
@@ -183,11 +183,11 @@ void Keeper::saveToFile()
 		cin >> ans;
 		if (cin.fail())
 		{
-			throw std::exception("Cant convert to string.") ;
+			throw exception("Cant convert to string.") ;
 		}
 		if ((ans != "y") && (ans != "n"))
 		{
-			throw std::exception("Wrong input. It has to be \"y\" or \"n\" ") ;
+			throw exception("Wrong input. It has to be \"y\" or \"n\" ") ;
 		}
 		if (ans == "n")
 		{
@@ -215,7 +215,7 @@ void Keeper::saveToFile()
 		out.close();
 		cout << "Saving to file \"" << this->saveFile << "\" has been completed.\n" << endl;
 	}
-	catch (const std::exception& ex)
+	catch (const exception& ex)
 	{
 		cin.clear();
 		char c;
@@ -238,11 +238,11 @@ void Keeper::loadFromFile()
 		cin >> ans;
 		if (cin.fail())
 		{
-			throw std::exception("Cant convert to string.") ;
+			throw exception("Cant convert to string.") ;
 		}
 		if ((ans != "y") && (ans != "n"))
 		{
-			throw std::exception("Wrong input. It has to be \"y\" or \"n\" ") ;
+			throw exception("Wrong input. It has to be \"y\" or \"n\" ") ;
 		}
 		if (ans == "n")
 		{
@@ -259,7 +259,7 @@ void Keeper::loadFromFile()
 			{
 				this->addEntry(str);
 			}
-			catch (const std::exception& ex)
+			catch (const exception& ex)
 			{
 				cout << ex.what() << endl;
 			}
@@ -268,7 +268,7 @@ void Keeper::loadFromFile()
 		cout << "Loading from file \"" << this->saveFile << "\" has been completed.\n" << endl;
 		in.close();
 	}
-	catch (const std::exception& ex)
+	catch (const exception& ex)
 	{
 		cin.clear();
 		char c;
