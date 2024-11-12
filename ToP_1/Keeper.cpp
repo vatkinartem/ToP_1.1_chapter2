@@ -1,6 +1,7 @@
 #include "Keeper.h"
 #include <iostream>
 #include <exception>
+#include "MyException.h"
 #include <fstream>
 #include <string>
 
@@ -183,11 +184,11 @@ void Keeper::saveToFile()
 		cin >> ans;
 		if (cin.fail())
 		{
-			throw exception("Cant convert to string.") ;
+			throw MyException("Cant convert to string.") ;
 		}
 		if ((ans != "y") && (ans != "n"))
 		{
-			throw exception("Wrong input. It has to be \"y\" or \"n\" ") ;
+			throw MyException("Wrong input. It has to be \"y\" or \"n\" ") ;
 		}
 		if (ans == "n")
 		{
@@ -238,11 +239,11 @@ void Keeper::loadFromFile()
 		cin >> ans;
 		if (cin.fail())
 		{
-			throw exception("Cant convert to string.") ;
+			throw MyException("Cant convert to string.") ;
 		}
 		if ((ans != "y") && (ans != "n"))
 		{
-			throw exception("Wrong input. It has to be \"y\" or \"n\" ") ;
+			throw MyException("Wrong input. It has to be \"y\" or \"n\" ") ;
 		}
 		if (ans == "n")
 		{
