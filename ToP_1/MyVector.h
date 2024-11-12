@@ -3,6 +3,8 @@
 #ifndef MYVECTOR_H
 #define MYVECTOR_H
 
+using std::exception;
+
 namespace myvec {
 /*My vector container with lesser functionality and optimisation*/
 template <class Type>

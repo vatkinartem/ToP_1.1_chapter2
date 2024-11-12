@@ -7,6 +7,7 @@
 #ifndef KEEPER_CPP
 #define KEEPER_CPP
 
+using std::exception;
 
 namespace keep {
 
@@ -331,12 +332,14 @@ void Keeper::addEntry(const string& _str)
 	string str = _str;
 	MyVector<string> words;				/*for usual text fields*/
 	words = std::move(extractFirstNWords(str, ' ', 1));
+	if (words.getSize() < 1) { return; }
 
 	if (words[0] == classNames[0])			/*if Student data*/
 	{
 		/*then Student fio group profesion 1 0.0*/
 
 		words = std::move(extractFirstNWords(str, ' ', 6));
+		if (words.getSize() < 6) { return; }
 		Student temp = { words[1] , words[2] , words[3] , stoi(words[4]) , stod(words[5]) };
 		this->students.pushBack(std::move(temp));
 	}
@@ -344,10 +347,12 @@ void Keeper::addEntry(const string& _str)
 	{
 		/*then Professor fio (group1 group2) (sub1 sub2) */
 		words = std::move(extractFirstNWords(str, ' ', 2));
+		if (words.getSize() < 2) { return;}
 		Professor temp;
 		temp.setFio(words[1]);
 
 		words = extractWordsBetweenChars(str, '(', ')');
+		if (words.getSize() < 2) { return; }
 		MyVector<string> words2;		/*for text field in brekets*/
 		words2 = std::move(extractFirstNWords(words[0], ' ', -1));
 		temp.getListOfGroups().pushBack(std::move(words2));
@@ -362,6 +367,7 @@ void Keeper::addEntry(const string& _str)
 	{
 		/*then AdminStaff fio post phone areaOfResponse */
 		words = std::move(extractFirstNWords(str, ' ', 5));
+		if (words.getSize() < 5) { return; }
 		AdminStaff temp;
 		temp.setFio(words[1]);
 		temp.setPost(words[2]);

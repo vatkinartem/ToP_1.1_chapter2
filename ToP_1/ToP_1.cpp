@@ -5,6 +5,7 @@
 #include <sstream>
 #include <vector>
 #include <exception>
+using std::exception;
 
 static keep::Keeper::vars strToVar(string& str) {
 	using namespace keep;
@@ -208,7 +209,6 @@ static void executeFunc(keep::Keeper& base) {
 	long long temp = -1;
 	string head;
 	string str;
-	char c;
 	cout << "\nHelp - " << MODE::HELP << "\nadd - " << MODE::ADD << "\nemplace - " \
 		<< MODE::EMPLACE << "\ndelete - " << MODE::DELETE << "\nexit - " << MODE::EXIT << endl;
 
@@ -288,6 +288,7 @@ static void executeFunc(keep::Keeper& base) {
 				if (var == Keeper::vars::STUDENT)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 6));
+					if (words.getSize() < 6) { throw(std::exception("Not enought fields for Student")); break; }
 					Student temps = { words[1] , words[2] , words[3] , stoi(words[4]) , stod(words[5]) };
 					base.getStudens().emplace(temp, std::move(temps));
 				}
@@ -295,10 +296,12 @@ static void executeFunc(keep::Keeper& base) {
 				{
 					/*then Professor fio (group1 group2) (sub1 sub2) */
 					words = std::move(extractFirstNWords1(str, ' ', 2));
+					if (words.getSize() < 2) { throw(std::exception("Not enought fields for Professor")); break; }
 					Professor tempp;
 					tempp.setFio(words[1]);
 
 					words = extractWordsBetweenChars1(str, '(', ')');
+					if (words.getSize() < 2) { throw(std::exception("Not enought () fields for Professor"));  break; }
 					MyVector<string> words2;		/*for text field in brekets*/
 					words2 = std::move(extractFirstNWords1(words[0], ' ', -1));
 					tempp.getListOfGroups().pushBack(std::move(words2));
@@ -311,6 +314,7 @@ static void executeFunc(keep::Keeper& base) {
 				else if (var == Keeper::vars::ADMINSTAFF)
 				{
 					words = std::move(extractFirstNWords1(str, ' ', 5));
+					if (words.getSize() < 5) { throw(std::exception("Not enought fields for AdminStaff")); break; }
 					AdminStaff tempa;
 					tempa.setFio(words[1]);
 					tempa.setPost(words[2]);
