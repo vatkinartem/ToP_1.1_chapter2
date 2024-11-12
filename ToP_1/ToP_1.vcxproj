@@ -139,6 +139,7 @@
     <ClInclude Include="AdminStaff.h" />
     <ClInclude Include="Human.h" />
     <ClInclude Include="Keeper.h" />
+    <ClInclude Include="MyException.h" />
     <ClInclude Include="MyVector.h" />
     <ClInclude Include="Professor.h" />
     <ClInclude Include="Student.h" />

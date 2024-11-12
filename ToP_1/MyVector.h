@@ -1,4 +1,5 @@
 #pragma once
+#include "MyException.h"
 
 #ifndef MYVECTOR_H
 #define MYVECTOR_H
