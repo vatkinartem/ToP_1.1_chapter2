@@ -140,8 +140,6 @@ static bool isValidString(std::string& str) {
 	using myvec::MyVector;
 	MyVector<string> word;
 	MyVector<string> wordBrack;
-	double testd;
-	long long testi;
 	Keeper::vars ourVar = Keeper::vars::NONE;
 	std::istringstream iss;
 	word.pushBack(std::move(extractFirstNWords1(str, ' ', -1)));

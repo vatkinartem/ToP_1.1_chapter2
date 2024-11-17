@@ -5,23 +5,20 @@
 #ifndef MYVECTOR_H
 #define MYVECTOR_H
 
- 
+
 
 namespace myvec {
 /*My vector container with lesser functionality and optimisation*/
 template <class Type>
 class MyVector
 {
-	
-public:
 	friend void swap(MyVector<Type>& _dest, MyVector<Type>& _source) noexcept;
-
-
+public:
 	MyVector();
 	MyVector(const MyVector<Type>& _myVector);
 	MyVector(MyVector<Type>&& _myVector) noexcept;
 	virtual ~MyVector();
-	string getClassName() const;
+	std::string getClassName() const;
 	Type** getData() const;
 	Type** getFront() const;
 	Type** getBack() const;
@@ -34,8 +31,8 @@ public:
 	void emplace(long long index, const Type& value);
 	void emplace(long long index, Type&& value);
 
-	MyVector<Type>& reserve(long long _capacity);
-	MyVector<Type>& resize(long long _size);
+	MyVector<Type>& reserve(long long _capacity);				/*allocating memory for new pointers for elements*/
+	MyVector<Type>& resize(long long _size);					/*changing size of used area and if needed calling reserve()*/
 	MyVector<Type>& shrink_to_fit();
 	MyVector<Type> getRange(long long _from, long long _to);
 	MyVector<Type>& erase(long long _index);
@@ -50,8 +47,12 @@ public:
 
 	const Type& operator[] (long long _index) const;
 	Type& operator[] (long long _index);
+
 	MyVector<Type>& operator= (const MyVector<Type>& _myVector);
 	MyVector<Type>& operator= (MyVector<Type>&& _myVector) noexcept;
+
+	MyVector<Type>& operator+ (const MyVector<Type>& _myVector);
+	MyVector<Type>& operator+ (MyVector<Type>&& _myVector) noexcept;
 
 protected:
 	
@@ -94,6 +95,9 @@ private:
 #ifndef MYVECTOR_CPP
 #define MYVECTOR_CPP
 
+using std::string;
+using std::exception;
+
 namespace myvec {
 
 #define MAX_ALLOC_TIMES 10
@@ -106,9 +110,6 @@ template<class Type>
 inline MyVector<Type>::MyVector()
 {
 	this->nullifyParams();
-#ifdef _DEBUG
-	cout << " " << this->getClassName() << "() with adress " << this << endl;
-#endif // _DEBUG
 }
 
 /*Conctructor of Copying*/
@@ -117,9 +118,6 @@ inline MyVector<Type>::MyVector(const MyVector<Type>& _myVector)
 {
 	this->nullifyParams();
 	this->copyData(_myVector);
-#ifdef _DEBUG
-	cout << " " << this->getClassName() << "() with adress " << this << " with source " << &_myVector << endl;
-#endif // _DEBUG
 }
 
 /*Conctructor of Transporting*/
@@ -132,9 +130,6 @@ inline MyVector<Type>::MyVector(MyVector<Type>&& _myVector) noexcept
 	this->size = _myVector.size;
 	this->capacity = _myVector.capacity;
 	_myVector.nullifyParams();
-#ifdef _DEBUG
-	cout << " " << this->getClassName() << "() with adress " << this << " with source " << &_myVector << endl;
-#endif // _DEBUG
 }
 
 /*Destructor*/
@@ -142,13 +137,10 @@ template<class Type>
 MyVector<Type>::~MyVector()
 {
 	this->freeMyVector();
-#ifdef _DEBUG
-	cout << "~" << this->getClassName() << "() with adress " << this << endl;
-#endif // _DEBUG
 }
 
 template<class Type>
-inline string MyVector<Type>::getClassName() const
+inline std::string MyVector<Type>::getClassName() const
 {
 	return string("MyVector<Type>");
 }
@@ -193,7 +185,7 @@ inline void MyVector<Type>::pushBack(const Type& value)
 	}
 	catch (const exception& ex)
 	{
-		cout << ex.what() << endl;
+		std::cout << ex.what() << std::endl;
 	}
 }
 
@@ -240,7 +232,7 @@ inline void MyVector<Type>::pushBack(Type&& value) noexcept
 	}
 	catch (const exception& ex)
 	{
-		cout << ex.what() << endl;
+		std::cout << ex.what() << std::endl;
 	}
 }
 
@@ -337,12 +329,12 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 
 	if (_capacity < 0)
 	{
-		cout << "Cant allocate vector. Size is less than zero." << endl;
+		std::cout << "Cant allocate vector. Size is less than zero." << std::endl;
 		return *this;
 	}
 	if (_capacity >= MAX_SIZE)
 	{
-		cout << "Cant allocate vector. Size is TOO big." << endl;
+		std::cout << "Cant allocate vector. Size is TOO big." << std::endl;
 		return *this;
 	}
 
@@ -359,7 +351,7 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 		}
 		catch (const exception& ex)
 		{
-			cout << ex.what() << endl;
+			std::cout << ex.what() << std::endl;
 			return *this;
 		}
 		this->data = temp_ptr;
@@ -389,7 +381,7 @@ inline MyVector<Type>& MyVector<Type>::reserve(long long _capacity)
 		}
 		catch (const exception& ex)
 		{
-			cout << ex.what() << endl;
+			std::cout << ex.what() << std::endl;
 			return *this;
 		}
 
@@ -410,7 +402,7 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 	/*if less then 0 then just return *this  and if we changing size to the EXACT size then return *this*/
 	if ((_size < 0) || (_size == this->size))
 	{
-		cout << "Cant resize vector." << endl;
+		std::cout << "Cant resize vector." << std::endl;
 		return *this;
 	}
 	/*if equal to 0 then just nullifying front/back ptrs*/
@@ -450,15 +442,17 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 				this->front[this->size + i] = new Type;
 				if (this->front[this->size + i] == nullptr)
 				{
+					this->size = this->size + i;
+					this->back = this->front + this->size;
 					throw MyException("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and lower then capacity.") ;
 				}
-				this->back++;
-				this->size++;
 			}
+			this->size = _size;
+			this->back = this->front + this->size;
 		}
 		catch (const exception& ex)
 		{
-			cout << ex.what() << endl;
+			std::cout << ex.what() << std::endl;
 		}
 		return *this;
 	}
@@ -474,15 +468,17 @@ inline MyVector<Type>& MyVector<Type>::resize(long long _size)
 				this->front[this->size + i] = new Type;
 				if (this->front[this->size + i] == nullptr)
 				{
+					this->size = this->size + i;
+					this->back = this->front + this->size;
 					throw MyException("Couldnt allocate memory in resize(long long _size) func. If above range of prev size and higher then capacity.") ;
 				}
-				this->back++;
-				this->size++;
 			}
+			this->size = _size;
+			this->back = this->front + this->size;
 		}
 		catch (const exception& ex)
 		{
-			cout << ex.what() << endl;
+			std::cout << ex.what() << std::endl;
 		}
 		return *this;
 	}
@@ -515,7 +511,7 @@ inline MyVector<Type> MyVector<Type>::getRange(long long _from, long long _to)
 		}
 		if (_to < _from)
 		{
-			cout << "Warning! Right index is smaller than left index. Swapping." << endl;
+			std::cout << "Warning! Right index is smaller than left index. Swapping." << std::endl;
 			std::swap(_from, _to);
 		}
 		long long newSize = _to - _from + 1;
@@ -530,7 +526,7 @@ inline MyVector<Type> MyVector<Type>::getRange(long long _from, long long _to)
 	}
 	else
 	{
-		cout << "Indexes is out of range in getRange func()" << endl;
+		std::cout << "Indexes is out of range in getRange func()" << std::endl;
 		return temp;
 	}
 }
@@ -556,7 +552,7 @@ inline MyVector<Type>& MyVector<Type>::erase(long long _from, long long _to)
 	{
 		if (_to < _from)
 		{
-			cout << "Warning! Right index is smaller than left index. Swapping." << endl;
+			std::cout << "Warning! Right index is smaller than left index. Swapping." << std::endl;
 			std::swap(_from, _to);
 		}
 		/*if range is equal to used part of vec then using clear()*/
@@ -586,7 +582,7 @@ inline MyVector<Type>& MyVector<Type>::erase(long long _from, long long _to)
 	}
 	else
 	{
-		cout << "Indexes is out of range" << endl;
+		std::cout << "Indexes is out of range" << std::endl;
 	}
 
 	return *this;
@@ -704,7 +700,7 @@ template<class Type>
 inline MyVector<Type>& MyVector<Type>::operator=(const MyVector<Type>& _myVector)
 {
 	/*if self equasion*/
-	if (this == addressof(_myVector))
+	if (this == std::addressof(_myVector))
 	{
 		return *this;
 	}
@@ -723,7 +719,7 @@ template<class Type>
 inline MyVector<Type>& MyVector<Type>::operator=(MyVector<Type>&& _myVector) noexcept
 {
 	/*if self equasion*/
-	if (this == addressof(_myVector))
+	if (this == std::addressof(_myVector))
 	{
 		return *this;
 	}
@@ -741,6 +737,20 @@ inline MyVector<Type>& MyVector<Type>::operator=(MyVector<Type>&& _myVector) noe
 	this->capacity = _myVector.capacity;
 	_myVector.nullifyParams();
 
+	return *this;
+}
+
+template<class Type>
+inline MyVector<Type>& MyVector<Type>::operator+(const MyVector<Type>& _myVector)
+{
+	this->pushBack(_myVector);
+	return *this;
+}
+
+template<class Type>
+inline MyVector<Type>& MyVector<Type>::operator+(MyVector<Type>&& _myVector) noexcept
+{
+	this->pushBack(_myVector);
 	return *this;
 }
 
@@ -788,7 +798,7 @@ template<class Type>
 inline void MyVector<Type>::copyData(const MyVector<Type>& _myVector)
 {
 	this->freeMyVector();
-	this->reserve(_myVector.size);
+	this->resize(_myVector.size);
 	/*Cycle for copying data*/
 	for (long long i = 0; i < _myVector.size; i++)
 	{
